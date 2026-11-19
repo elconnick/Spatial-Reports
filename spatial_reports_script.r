@@ -1,7 +1,7 @@
 ############################################################
 # Xenium QC Report Generator
 #
-# Generates a PDF report summarising:
+# Collects run metrics for the PDF report (Xenium_QC_Report.Rmd):
 # - Cells detected
 # - Total transcripts
 # - Median genes per cell
@@ -13,7 +13,6 @@
 library(dplyr)
 library(readr)
 library(purrr)
-library(rmarkdown)
 
 ############################################################
 # USER SETTINGS
@@ -241,30 +240,20 @@ if(length(outlier_text) == 0) {
 # SAVE OBJECTS FOR REPORT
 ############################################################
 
+report_data_file <- file.path(
+  output_dir,
+  "report_data.RData"
+)
+
 save(
   summary_df,
   overall_summary,
   outlier_text,
-  file = file.path(
-    output_dir,
-    "report_data.RData"
-  )
-)
-
-############################################################
-# RENDER REPORT
-############################################################
-
-rmarkdown::render(
-  input = "spatial_reports_script.r",
-  output_file = "Xenium_Run_QC_Report.pdf",
-  output_dir = output_dir
+  file = report_data_file
 )
 
 message(
-  "Report written to: ",
-  file.path(
-    output_dir,
-    "Xenium_Run_QC_Report.pdf"
-  )
+  "Report data written to: ",
+  report_data_file,
+  "\nRender the PDF with Xenium_QC_Report.Rmd."
 )
