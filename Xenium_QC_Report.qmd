@@ -1,16 +1,25 @@
 ---
 title: "Xenium Run QC Report"
-date: "`r format(Sys.Date(), '%d %B %Y')`"
-output:
-  pdf_document:
-    toc: false
+date: today
+date-format: "D MMMM YYYY"
+format:
+  typst:
+    papersize: a4
+    margin:
+      x: 2cm
+      y: 2cm
+execute:
+  echo: false
+  message: false
+  warning: false
 params:
   data_file: "report_data.RData"
   run_name: ""
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```{r}
+#| label: setup
+#| include: false
 
 # Loads summary_df, overall_summary and outlier_text,
 # written by spatial_reports_script.r
@@ -21,7 +30,9 @@ load(params$data_file)
 
 # Run Summary
 
-```{r overall}
+```{r}
+#| label: overall
+
 knitr::kable(
   overall_summary,
   col.names = c("Metric", "Value"),
@@ -31,7 +42,9 @@ knitr::kable(
 
 # Region Metrics
 
-```{r regions}
+```{r}
+#| label: regions
+
 region_table <- summary_df[, c(
   "Region",
   "Cells_Detected",
@@ -68,6 +81,9 @@ knitr::kable(
 Regions are flagged when any metric lies more than 2 standard deviations
 from the run mean.
 
-```{r interpretation, results = "asis"}
+```{r}
+#| label: interpretation
+#| output: asis
+
 cat(paste0("- ", outlier_text, collapse = "\n"))
 ```

@@ -1,7 +1,7 @@
 ############################################################
 # Xenium QC Report Generator
 #
-# Collects run metrics for the PDF report (Xenium_QC_Report.Rmd):
+# Collects run metrics for the PDF report (Xenium_QC_Report.qmd):
 # - Cells detected
 # - Total transcripts
 # - Median genes per cell
@@ -18,8 +18,19 @@ library(purrr)
 # USER SETTINGS
 ############################################################
 
-# Root directory containing all Xenium region folders
+# Root directory containing all Xenium region folders.
+# A path given on the command line (e.g. by run_qc_report.sh)
+# overrides this default.
 xenium_root <- "/nemo/stp/sequencing/inputs/instruments/xenium/10xdata/20260923__134312__SP26194_230926"
+
+cli_args <- commandArgs(trailingOnly = TRUE)
+if (length(cli_args) >= 1) {
+  xenium_root <- cli_args[1]
+}
+
+if (!dir.exists(xenium_root)) {
+  stop("Xenium run folder not found: ", xenium_root)
+}
 
 # Output folder
 output_dir <- file.path(xenium_root, "QC_Report")
@@ -255,5 +266,5 @@ save(
 message(
   "Report data written to: ",
   report_data_file,
-  "\nRender the PDF with Xenium_QC_Report.Rmd."
+  "\nRender the PDF with Xenium_QC_Report.qmd (see run_qc_report.sh)."
 )
