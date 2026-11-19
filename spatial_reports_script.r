@@ -19,7 +19,7 @@ library(purrr)
 ############################################################
 
 # Root directory containing all Xenium region folders.
-# A path given on the command line (e.g. by run_qc_report.sh)
+# A path given on the command line
 # overrides this default.
 xenium_root <- "/nemo/stp/sequencing/inputs/instruments/xenium/10xdata/20260923__134312__SP26194_230926"
 
@@ -266,5 +266,5 @@ save(
 message(
   "Report data written to: ",
   report_data_file,
-  "\nRender the PDF with Xenium_QC_Report.qmd (see run_qc_report.sh)."
+  "\nRender the PDF with Xenium_QC_Report.qmd (see README)."
 )
