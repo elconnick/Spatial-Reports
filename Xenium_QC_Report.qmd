@@ -1,0 +1,89 @@
+---
+title: "Xenium Run QC Report"
+date: today
+date-format: "D MMMM YYYY"
+format:
+  typst:
+    papersize: a4
+    margin:
+      x: 2cm
+      y: 2cm
+execute:
+  echo: false
+  message: false
+  warning: false
+params:
+  data_file: "report_data.RData"
+  run_name: ""
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# Loads summary_df, overall_summary and outlier_text,
+# written by spatial_reports_script.r
+load(params$data_file)
+```
+
+`r if (nzchar(params$run_name)) paste0("**Run:** ", params$run_name)`
+
+# Run Summary
+
+```{r}
+#| label: overall
+
+knitr::kable(
+  overall_summary,
+  col.names = c("Metric", "Value"),
+  align = c("l", "r")
+)
+```
+
+# Region Metrics
+
+```{r}
+#| label: regions
+
+region_table <- summary_df[, c(
+  "Region",
+  "Cells_Detected",
+  "Total_Transcripts",
+  "Median_Genes_Per_Cell",
+  "Median_Transcripts_Per_Cell",
+  "Percent_Assigned"
+)]
+
+region_table$Cells_Detected <-
+  format(region_table$Cells_Detected, big.mark = ",")
+region_table$Total_Transcripts <-
+  format(region_table$Total_Transcripts, big.mark = ",")
+region_table$Percent_Assigned <-
+  round(region_table$Percent_Assigned, 1)
+
+knitr::kable(
+  region_table,
+  col.names = c(
+    "Region",
+    "Cells",
+    "Transcripts",
+    "Median Genes / Cell",
+    "Median Transcripts / Cell",
+    "% Assigned"
+  ),
+  align = c("l", "r", "r", "r", "r", "r"),
+  row.names = FALSE
+)
+```
+
+# Interpretation
+
+Regions are flagged when any metric lies more than 2 standard deviations
+from the run mean.
+
+```{r}
+#| label: interpretation
+#| output: asis
+
+cat(paste0("- ", outlier_text, collapse = "\n"))
+```
